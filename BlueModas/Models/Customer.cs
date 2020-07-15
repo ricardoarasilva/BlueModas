@@ -6,7 +6,7 @@ namespace BlueModas.Models
         public Customer()
         {
         }
-        public long CustomerId { get; set; }
+        public Guid CustomerId { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }

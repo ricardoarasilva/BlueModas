@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BlueModas.Models
 {
@@ -7,12 +8,14 @@ namespace BlueModas.Models
     {
         public Order()
         {
-
+            this.OrderItems = new HashSet<OrderItem>();
         }
 
-        public long OrderNumber { get; set; }
-        public List<OrderItem> OrderItems { get; set; }
+        public Guid OrderId { get; set; }
+        public ICollection<OrderItem> OrderItems { get; set; }
         public decimal Total { get; set; }
+        public bool InProgress { get; set; }
+        public Customer CustomerData { get; set; }
 
     }
 }

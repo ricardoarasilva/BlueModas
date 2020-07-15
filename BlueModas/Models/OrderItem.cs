@@ -7,6 +7,7 @@ namespace BlueModas.Models
         {
         }
 
+        public Guid OrderItemId { get; set; }
         public Product Product { get; set; }
         public decimal Quantity { get; set; }
     }

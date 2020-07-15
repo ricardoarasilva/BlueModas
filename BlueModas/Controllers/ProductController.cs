@@ -4,39 +4,40 @@ using System.Linq;
 using System.Threading.Tasks;
 using BlueModas.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace BlueModas.Controllers
 {
+    [Produces("application/json")]
     [Route("api/[controller]")]
     public class ProductController : Controller
     {
-        private List<Product> _productList;
+        private readonly ApiContext _context;
 
-        public ProductController()
+        public ProductController(ApiContext context)
         {
-            _productList = new List<Product>();
-
-            _productList.Add(new Product { Description = "Produto 1", Image = "", Price = 10, ProductId = 1 });
-            _productList.Add(new Product { Description = "Produto 2", Image = "", Price = 10, ProductId = 2 });
-            _productList.Add(new Product { Description = "Produto 3", Image = "", Price = 10, ProductId = 3 });
-            _productList.Add(new Product { Description = "Produto 4", Image = "", Price = 10, ProductId = 4 });
-            _productList.Add(new Product { Description = "Produto 5", Image = "", Price = 10, ProductId = 5 });
+            _context = context;
         }
 
         // GET: api/values
         [HttpGet]
-        public IEnumerable<Product> Get()
+        public async Task<IActionResult> Get()
         {
-            return _productList;
+            var products = await _context.Products
+                                 .ToArrayAsync();
+
+            return Ok(products);
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public Product Get(long id)
+        public async Task<IActionResult> Get(Guid id)
         {
-            return _productList.FirstOrDefault(a => a.ProductId == id);
+            var product = await _context.Products.FirstOrDefaultAsync(a => a.ProductId == id);
+
+            return Ok(product);
         }
     }
 }
