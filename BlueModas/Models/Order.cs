@@ -14,7 +14,9 @@ namespace BlueModas.Models
         public Guid OrderId { get; set; }
         public ICollection<OrderItem> OrderItems { get; set; }
         public decimal Total { get; set; }
+        public decimal Quantity { get; set; }
         public bool InProgress { get; set; }
+        public DateTime DateTimeOrder { get; set; }
         public Customer CustomerData { get; set; }
 
     }

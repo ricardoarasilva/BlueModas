@@ -15,9 +15,9 @@
         <tr *ngFor="let product of products">
             <td>{{ product.productId }}</td>
             <td>{{ product.description }}</td>
-            <td>{{ product.image }}</td>
-            <td>{{ product.price }}</td>
-            <td><button (click)="addProduct(product.productId)">Adicionar ao carrinho</button></td>
+            <td><img src="{{ product.image }}" style="width:40px;"/></td>
+            <td>{{ product.price| currency : 'R$' }}</td>
+            <td><button class="btn btn-primary" (click)="addProduct(product.productId)">Adicionar ao carrinho</button></td>
         </tr>
     </tbody>
 </table>

@@ -9,18 +9,17 @@ namespace BlueModas.Models
         public ApiContext(DbContextOptions<ApiContext> options)
           : base(options)
         {
-            AddTestData();
         }
 
-        private void AddTestData()
+        public void AddTestData()
         {
             if (!Products.Any())
             {
-                Products.Add(new Product { Description = "Produto 1", Image = "", Price = 10, ProductId = System.Guid.NewGuid() });
-                Products.Add(new Product { Description = "Produto 2", Image = "", Price = 20, ProductId = System.Guid.NewGuid() });
-                Products.Add(new Product { Description = "Produto 3", Image = "", Price = 30, ProductId = System.Guid.NewGuid() });
-                Products.Add(new Product { Description = "Produto 4", Image = "", Price = 40, ProductId = System.Guid.NewGuid() });
-                Products.Add(new Product { Description = "Produto 5", Image = "", Price = 50, ProductId = System.Guid.NewGuid() });
+                Products.Add(new Product { Description = "Produto 1", Image = "https://pixabay.com/get/57e8dc404c56ae14f1dc8460da2932771136dfe7555977_640.jpg", Price = 10, ProductId = System.Guid.NewGuid() });
+                Products.Add(new Product { Description = "Produto 2", Image = "https://pixabay.com/get/57e8dc404c56ae14f1dc8460da2932771136dfe7555977_640.jpg", Price = 20, ProductId = System.Guid.NewGuid() });
+                Products.Add(new Product { Description = "Produto 3", Image = "https://pixabay.com/get/57e8dc404c56ae14f1dc8460da2932771136dfe7555977_640.jpg", Price = 30, ProductId = System.Guid.NewGuid() });
+                Products.Add(new Product { Description = "Produto 4", Image = "https://pixabay.com/get/57e8dc404c56ae14f1dc8460da2932771136dfe7555977_640.jpg", Price = 40, ProductId = System.Guid.NewGuid() });
+                Products.Add(new Product { Description = "Produto 5", Image = "https://pixabay.com/get/57e8dc404c56ae14f1dc8460da2932771136dfe7555977_640.jpg", Price = 50, ProductId = System.Guid.NewGuid() });
                 this.SaveChanges();
             }
         }

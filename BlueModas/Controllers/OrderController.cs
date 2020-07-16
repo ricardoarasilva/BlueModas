@@ -21,41 +21,17 @@ namespace BlueModas.Controllers
         }
 
         // GET: api/values
-        [HttpGet]
-        public IEnumerable<string> Get()
+        [HttpGet("last-orders")]
+        public List<Order> LastOrders()
         {
-            return new string[] { "value1", "value2" };
-        }
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            return _context.Orders.Where(a=>a.InProgress == false).Include("OrderItems.Product").Include("CustomerData").OrderByDescending(a=>a.DateTimeOrder).ToList();
         }
 
         [HttpPost("add-product/{value}")]
-        public void AddProduct(Guid value)
+        public dynamic AddProduct(Guid value)
         {
-            var model = _context.Orders.FirstOrDefault(a => a.InProgress);
+            var model = _context.Orders.Include("OrderItems.Product").FirstOrDefault(a => a.InProgress);
             if(model == null)
             {
                 model = new Order();
@@ -77,14 +53,92 @@ namespace BlueModas.Controllers
             item.Quantity += 1;
 
             model.Total = model.OrderItems.Sum(a => a.Quantity * a.Product.Price);
+            model.Quantity = model.OrderItems.Sum(a => a.Quantity);
 
             _context.SaveChanges();
+
+            return new
+            {
+                Success = true,
+                QuantityInCart = model.Quantity
+            };
         }
 
         [HttpGet("get-cart")]
         public Order GetCart()
         {
             return _context.Orders.Include("OrderItems.Product").FirstOrDefault(a=>a.InProgress);
+        }
+
+        // POST api/values
+        [HttpPost("update-cart-item")]
+        public dynamic UpdateCartItem([FromBody] OrderItem value)
+        {
+            var model = _context.Orders.Include("OrderItems.Product").FirstOrDefault(a => a.InProgress);
+            if(model != null)
+            {
+                var item = model.OrderItems.FirstOrDefault(a => a.OrderItemId == value.OrderItemId);
+                item.Quantity = value.Quantity;
+
+                model.Total = model.OrderItems.Sum(a => a.Quantity * a.Product.Price);
+                model.Quantity = model.OrderItems.Sum(a => a.Quantity);
+
+                _context.SaveChanges();
+            }
+
+            return new
+            {
+                Success = true,
+                QuantityInCart = model.Quantity
+            };
+        }
+
+        // DELETE api/values/5
+        [HttpDelete("remove-item-cart/{id}")]
+        public dynamic RemoveItemCart(Guid id)
+        {
+            var model = _context.Orders.Include("OrderItems.Product").FirstOrDefault(a => a.InProgress);
+            if (model != null)
+            {
+                model.OrderItems.Remove(model.OrderItems.FirstOrDefault(a => a.OrderItemId == id));
+                _context.OrderItems.Remove(_context.OrderItems.FirstOrDefault(a => a.OrderItemId == id));
+
+                model.Total = model.OrderItems.Sum(a => a.Quantity * a.Product.Price);
+                model.Quantity = model.OrderItems.Sum(a => a.Quantity);
+
+                _context.SaveChanges();
+            }
+
+            return new
+            {
+                Success = true,
+                QuantityInCart = model.Quantity
+            };
+
+        }
+
+        // POST api/values
+        [HttpPost("confirm-order")]
+        public dynamic ConfirmOrder([FromBody] Order value)
+        {
+            var model = _context.Orders.Include("OrderItems.Product").Include("CustomerData").FirstOrDefault(a => a.InProgress);
+            if (model != null)
+            {
+                model.CustomerData = value.CustomerData;
+                model.InProgress = false;
+                model.DateTimeOrder = DateTime.Now;
+
+                model.Total = model.OrderItems.Sum(a => a.Quantity * a.Product.Price);
+                model.Quantity = model.OrderItems.Sum(a => a.Quantity);
+
+                _context.SaveChanges();
+            }
+
+            return new
+            {
+                Success = true,
+                QuantityInCart = 0
+            };
         }
     }
 }

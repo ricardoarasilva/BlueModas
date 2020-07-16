@@ -1,0 +1,60 @@
+<h1 *ngIf="!orderConfirmed">Meu Carrinho de Compras</h1>
+
+<p *ngIf="!orderConfirmed">Verifique os itens comprados para continuar:</p>
+
+<h1 *ngIf="orderConfirmed">Pedido nº {{order.orderId}} Confirmado! </h1>
+
+<p *ngIf="orderConfirmed"> Items do pedido:</p>
+
+<div *ngIf="!order">
+    <p>Carrinho está vazio!</p>
+</div>
+
+<div *ngIf="order">
+    <table class='table table-striped' aria-labelledby="tableLabel" *ngIf="order.orderItems">
+        <thead>
+            <tr>
+                <th>Codigo do Produto</th>
+                <th>Descrição</th>
+                <th>Imagem</th>
+                <th>Preço</th>
+                <th>Quantidade</th>
+                <th>Total</th>
+                <th *ngIf="!orderConfirmed"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of order.orderItems">
+                <td>{{ item.product.productId }}</td>
+                <td>{{ item.product.description }}</td>
+                <td><img src="{{ item.product.image }}" style="width:40px;" /></td>
+                <td>{{ item.product.price| currency : 'R$' }}</td>
+                <td *ngIf="!itemsConfirmed"><input type="number" min="1" [(ngModel)]="item.quantity" (change)="changeQuantity(item);" /></td>
+                <td *ngIf="itemsConfirmed">{{ item.quantity }}</td>
+                <td>{{ item.product.price*item.quantity| currency : 'R$' }}</td>
+                <td><button class="btn btn-danger" *ngIf="!orderConfirmed" (click)="removeItem(item)">Remover</button></td>
+            </tr>
+        </tbody>
+    </table>
+    <p>Valor Total: {{order.total| currency : 'R$'}}</p>
+    <p><button class="btn btn-primary" (click)="itemsConfirmed = true; order.customerData = {}" *ngIf="!itemsConfirmed">Confirmar Itens</button></p>
+
+    <div *ngIf="itemsConfirmed && !orderConfirmed">
+        <p>Preencha os dados do cliente:</p>
+
+        <p>Nome: <input type="text" style="width:100%" [(ngModel)]="order.customerData.name" /></p>
+        <p>E-mail: <input type="email" style="width:100%" [(ngModel)]="order.customerData.email" /></p>
+        <p>Telefone: <input type="tel" style="width:100%" [(ngModel)]="order.customerData.phone" /></p>
+
+        <button class="btn btn-primary" *ngIf="itemsConfirmed" (click)="confirmOrder();">Confirmar Compra</button>
+        <button class="btn btn-warning" (click)="itemsConfirmed = false" *ngIf="itemsConfirmed">Corrigir Itens</button>
+    </div>
+
+    <div *ngIf="orderConfirmed">
+        <p>Dados do cliente:</p>
+
+        <p>Nome: {{order.customerData.name}}</p>
+        <p>E-mail: {{ order.customerData.email}}</p>
+        <p>Telefone: {{order.customerData.phone}}</p>
+    </div>
+</div>

@@ -14,13 +14,20 @@ export class HomeComponent {
     http.get<Product[]>(baseUrl + 'api/product').subscribe(result => {
       this.products = result;
     }, error => console.error(error));
+    http.get<Order>(baseUrl + 'api/order/get-cart').subscribe(result => {
+      if (result)
+        this.globals.cartQtde = result.quantity;
+    }, error => console.error(error));
     this.baseUrl = baseUrl;
   }
 
   addProduct(productId) {
     console.log(this.baseUrl);
-    this.http.post(this.baseUrl + 'api/order/add-product/' + productId, {}).subscribe(result => {
-      console.log("done");
+    this.http.post<Result>(this.baseUrl + 'api/order/add-product/' + productId, {}).subscribe(result => {
+      console.log(result.success, result.quantityInCart);
+      if (result.success) {
+        this.globals.cartQtde = result.quantityInCart;
+      }
     }, error => console.error(error));
   }
 
@@ -31,4 +38,16 @@ interface Product {
   description: string;
   price: number;
   image: string;
+}
+
+interface Order {
+  orderId: string;
+  total: number;
+  inProgress: boolean;
+  quantity: number;
+}
+
+interface Result {
+  success: boolean;
+  quantityInCart: number;
 }

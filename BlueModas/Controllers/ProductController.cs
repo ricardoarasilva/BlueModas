@@ -25,6 +25,10 @@ namespace BlueModas.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
+            if (!_context.Products.Any())
+            {
+                _context.AddTestData();
+            }
             var products = await _context.Products
                                  .ToArrayAsync();
 
